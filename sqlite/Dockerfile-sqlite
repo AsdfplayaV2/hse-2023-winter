@@ -6,3 +6,7 @@ RUN apk add --no-cache sqlite
 
 # Copy your SQLite database file into the container
 COPY tasklist.db /tasklist.db
+
+# Copy the initialization script
+COPY init.sql /docker-entrypoint-initdb.d/
+
