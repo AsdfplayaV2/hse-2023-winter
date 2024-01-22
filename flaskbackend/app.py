@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
 
 # PostgreSQL configuration
 db_config = {

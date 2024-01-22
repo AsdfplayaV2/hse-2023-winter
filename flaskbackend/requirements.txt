@@ -2,3 +2,4 @@ Flask
 psycopg2
 opentelemetry-api
 opentelemetry-sdk
+flask-cors

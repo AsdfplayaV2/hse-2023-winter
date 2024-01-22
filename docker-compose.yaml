@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  frontend:
+    build:
+      context: ./reactfrontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
   postgres:
     build:
       context: ./database
