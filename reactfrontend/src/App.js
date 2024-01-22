@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+// frontend/src/components/TaskList.js
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function App() {
+const TaskList = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://backend:5000/tasks')
+      .then(response => setTasks(response.data))
+      .catch(error => console.error('Error fetching tasks:', error));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Task List</h1>
+      <ul>
+        {tasks.map(task => (
+          <li key={task.id}>
+            {task.title} - Completed: {task.completed ? 'Yes' : 'No'}
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
 
-export default App;
+export default TaskList;

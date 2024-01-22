@@ -1,22 +1,24 @@
 version: '3'
+
 services:
-  flask-app:
-    build:
-      context: ./flaskbackend
-      dockerfile: Dockerfile-flask
+  backend:
+    build: ./backend
     ports:
       - "5000:5000"
     depends_on:
       - database
 
   database:
-    build: ./database 
-    ports:
-      - "5432:5432"
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
 
-  reactfrontend:
-    build:
-      context: ./reactfrontend
-      dockerfile: Dockerfile-react
+  frontend:
+    build: ./frontend
     ports:
       - "3000:3000"
+    depends_on:
+      - backend
