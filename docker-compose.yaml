@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  postgres:
+    build:
+      context: ./database
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./flaskbackend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
