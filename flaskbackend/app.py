@@ -2,10 +2,29 @@ from flask import Flask, jsonify, request
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask_cors import CORS
-
+from opentelemetry import trace
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 app = Flask(__name__)
 CORS(app)
+
+# Configure OpenTelemetry
+trace.set_tracer_provider(TracerProvider(resource=Resource.create({'service.name': 'your-flask-service'})))
+tracer_provider = trace.get_tracer_provider()
+
+# Configure a Jaeger exporter. Replace 'your-jaeger-collector' with the actual address.
+jaeger_exporter = JaegerExporter(agent_host_name='your-jaeger-collector', agent_port=6831)
+
+# Create a BatchSpanProcessor and add the exporter
+span_processor = BatchSpanProcessor(jaeger_exporter)
+tracer_provider.add_span_processor(span_processor)
+
+# Instrument Flask
+FlaskInstrumentor().instrument_app(app)
 
 # PostgreSQL configuration
 db_config = {

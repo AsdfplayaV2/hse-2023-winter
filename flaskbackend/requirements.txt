@@ -1,5 +1,6 @@
 Flask
 psycopg2
-opentelemetry-api
-opentelemetry-sdk
 flask-cors
+opentelemetry-api
+opentelemetry-sdk 
+opentelemetry-instrumentation-flask

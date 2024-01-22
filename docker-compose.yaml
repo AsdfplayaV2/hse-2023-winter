@@ -9,6 +9,8 @@ services:
     networks:
       - mynetwork
     restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 
   backend:
@@ -37,7 +39,7 @@ services:
       - backend
       
 
-  
-
 networks:
   mynetwork:
+volumes:
+  postgres_data:
