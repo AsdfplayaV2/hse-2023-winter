@@ -7,12 +7,12 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - sqlite-db
+      - database
 
-  sqlite-db:
-    build:
-      context: ./sqlite
-      dockerfile: Dockerfile-sqlite
+  database:
+    build: ./database 
+    ports:
+      - "5432:5432"
 
   reactfrontend:
     build:
