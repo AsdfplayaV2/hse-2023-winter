@@ -1,6 +1,28 @@
 version: '3'
 
 services:
+  postgres:
+    build:
+      context: ./database
+    ports:
+      - 5432:5432
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+
+  backend:
+    build:
+      context: ./flaskbackend
+    ports:
+      - 5000:5000
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+
   frontend:
     build:
       context: ./reactfrontend
@@ -8,17 +30,14 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - mynetwork
+    restart: unless-stopped
+    links:
+      - backend
+      
 
-  postgres:
-    build:
-      context: ./database
-    ports:
-      - "5432:5432"
+  
 
-  backend:
-    build:
-      context: ./flaskbackend
-    ports:
-      - "5000:5000"
-    depends_on:
-      - postgres
+networks:
+  mynetwork:

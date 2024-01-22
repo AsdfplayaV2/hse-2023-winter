@@ -26,15 +26,35 @@ def get_tasks():
         tasks = cursor.fetchall()
     return jsonify(tasks)
 
-@app.route('/tasks/<int:task_id>', methods=['GET'])
-def get_task(task_id):
-    with create_connection() as connection, connection.cursor(cursor_factory=RealDictCursor) as cursor:
-        cursor.execute("SELECT * FROM tasklist WHERE id = %s", (task_id,))
-        task = cursor.fetchone()
-    if task is not None:
-        return jsonify(task)
-    else:
-        return jsonify(message="Task not found"), 404
+@app.route('/tasks/<int:task_id>', methods=['GET', 'POST', 'DELETE'])
+def get_update_or_delete_task(task_id):
+    if request.method == 'GET':
+        with create_connection() as connection, connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("SELECT * FROM tasklist WHERE id = %s", (task_id,))
+            task = cursor.fetchone()
+        if task is not None:
+            return jsonify(task)
+        else:
+            return jsonify(message="Task not found"), 404
+    elif request.method == 'POST':
+        data = request.json
+        with create_connection() as connection, connection.cursor() as cursor:
+            cursor.execute("UPDATE tasklist SET completed = %s WHERE id = %s RETURNING *", (data['completed'], task_id))
+            updated_task = cursor.fetchone()
+            if updated_task is not None:
+                connection.commit()
+                return jsonify(updated_task)
+            else:
+                return jsonify(message="Task not found"), 404
+    elif request.method == 'DELETE':
+        with create_connection() as connection, connection.cursor() as cursor:
+            cursor.execute("DELETE FROM tasklist WHERE id = %s RETURNING *", (task_id,))
+            deleted_task = cursor.fetchone()
+            if deleted_task is not None:
+                connection.commit()
+                return jsonify(deleted_task)
+            else:
+                return jsonify(message="Task not found"), 404
 
 @app.route('/tasks', methods=['POST'])
 def create_task():
